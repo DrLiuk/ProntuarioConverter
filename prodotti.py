@@ -1,43 +1,55 @@
 
+#Inizializzazione variabile per FILE.txt elenco pesi teorici elementi
+fName = 'pesi_teorici_ferro.txt'
+
 class Prodotto:
-    def __init__(self, cod, pesoTeorico):
+    def __init__(self, cod):
        self.codice = cod
-       self.pesoTeorico = pesoTeorico
 
     def print(self):
        print(self.codice)
-       print(str(self.pesoTeorico) + " Kg/m")
-    
-    def to_kg(self,mt = 1):
-       return (self.pesoTeorico * mt)
-    
-    def to_mt(self, kg = 1):
-       return (kg/self.pesoTeorico)
+       print("... Kg/m")
 
+def calcolaPesoTeorico(cod):
+   f = open(fName,"r")
+   righe = f.readlines()
+   f.close()
+   print(f'Prima riga {righe[0]}')
+   cod = cod.strip()
+   dati = cod.split('-')
+   codTipo = dati[0]
+   codMis = dati[1]
 
-# CLASSE TUBOLARE
-class Tubolare(Prodotto):
-   def __init__(self, dim1, dim2, sp, pesoTeorico):
-      cod = ("tb" + {dim1}+ "x" + {dim2} + "x" + {sp})
-      super().__init__(cod, pesoTeorico)
-      self.dim1 = dim1
-      self.dim2 = dim2
-      self.sp = sp
-   
-   def print(self):
-      print("TUBOLARE")
-      print({self.dim1} + "x" + {self.dim2} + "x" + {self.sp})
-      print("Peso Teorico: " + {self.pesoTeorico})
-    
-#CLASSE PIATTO LAMINATO
-class PiattoLam(Prodotto):
-   def __init__(self, dim1, sp, pesoTeorico):
-      cod = ("ptLam" + {dim1}+ "x" + {sp})
-      super().__init__(cod, pesoTeorico)
-      self.dim1 = dim1
-      self.sp = sp
-   
-   def print(self):
-      print("PIATTO LAMINATO")
-      print({self.dim1} + "x" + {self.sp})
-      print("Peso Teorico: " + {self.pesoTeorico})
+   for riga in righe:
+      riga = riga.strip()
+      dati = riga.split('-')
+      if dati[0] == codTipo and dati[1] == codMis:
+         dati = riga.split('|')
+         return dati[1]
+   #creare msg Box
+   return ''  
+
+def pesoTeoricoDaMisure(tipo,larghezza,altezza,spessore):
+   f = open(fName,'r')
+   righe = f.readlines()
+   f.close()
+
+   print(righe)
+   codMis1 = (f'{larghezza}x{altezza}x{spessore}')
+   codMis2 = (f'{altezza}x{larghezza}x{spessore}')
+
+   for riga in righe:
+      riga = riga.strip()
+      dati = riga.split('-')
+      if dati[0] == tipo:
+         if dati[1] == codMis1 or dati[1] == codMis2:
+            dati = riga.split('|')
+            return int(dati[1])
+   #creare msg Box
+   return 0  
+
+def mtToKg(metri,peso):
+   return peso*metri
+
+def kgToMt(kili,peso):
+   return kili/peso
