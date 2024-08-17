@@ -50,6 +50,29 @@ def calcola(tipo,larghezza,altezza,spessore):
     calcolaPesoButton = Button (calcolaWindow,text='Calcola',command=lambda:converti())
     calcolaPesoButton.grid(column=0,row=3,columnspan=3,pady=15)
 
+def aggiungi(tipo,larghezza,altezza,spessore):
+    aggiungiWindow = Tk()
+    aggiungiWindow.title('Aggiungi...')
+    aggiungiWindow.geometry('570x180+570+260')
+    aggiungiWindow.resizable(False,False)
+
+    def aggiungi_elemento(tipo,larghezza,altezza,spessore):
+        pesoTeorico = pesoTeoricoEntry.get()
+        prodotti.aggiungi_prodotto(tipo,larghezza,altezza,spessore,pesoTeorico)
+        aggiungiWindow.destroy()
+
+    pesoTeoricoLabel = Label(aggiungiWindow,text='METRI',font=(font_One,18),padx=10,pady=10)
+    pesoTeoricoLabel.pack(pady=10)
+    pesoTeoricoEntry = Entry(aggiungiWindow,font=(font_One,18),width=15,bd=7)
+    pesoTeoricoEntry.pack(pady=5)
+    pesoTeoricoEntry.focus()
+
+    aggiungiProdottoButton = Button (aggiungiWindow,text='Aggiungi',command=lambda:aggiungi_elemento(tipo,larghezza,altezza,spessore))
+    aggiungiProdottoButton.pack(side='right',expand=True)
+
+def distruggiFrame(frame):
+    frame.destroy()
+
 def create_main_window():
     mainWindow = Tk()
     mainWindow.title('Convertitore pesi prontuario')
@@ -67,9 +90,8 @@ def create_main_window():
         mainWindow_inputFrame = Frame(mainWindow,background='#1E1E24',padx=50)
         mainWindow_inputFrame.pack(side='left',fill=BOTH,expand=True)
         return mainWindow_inputFrame
+    
     mainWindow_inputFrame = crea_InputFrame()
-    def distruggiFrame(frame):
-        frame.destroy()
     
     # Frame per contenere i primi due bottoni affiancati
     mainWindow_buttonFrame = Frame(mainWindow)
@@ -87,37 +109,44 @@ def create_main_window():
     tipoBox.pack()
     #tipoEntry = Entry(mainWindow_tipoFrame,textvariable=tipo,background='#1E1E24',foreground='white',font=(font_One,14))
     #tipoEntry.pack()
-   
-  
-    mainWindow_larghezzaFrame = Frame(mainWindow_inputFrame,background='#1E1E24')
-    mainWindow_larghezzaFrame.pack(padx=15,pady=20)
-    larghezza = StringVar()
-    larghezzaLabel = Label(mainWindow_larghezzaFrame,text = 'Inserisci larghezza:',background='#1E1E24',foreground='white',font=(font_One,16))
-    larghezzaLabel.grid(column=0,row=2)
-    larghezzaEntry = Entry(mainWindow_larghezzaFrame,textvariable=larghezza,font=(font_One,14))
-    larghezzaEntry.grid(column=0,row=3,padx=10,pady=5)
+    tipoBox.bind('<ComboboxSelected>',print('ciao'))
 
+    def crea_larghezzaFrame():
+        mainWindow_larghezzaFrame = Frame(mainWindow_inputFrame,background='#1E1E24')
+        mainWindow_larghezzaFrame.pack(padx=15,pady=20)
+        larghezza = StringVar()
+        larghezzaLabel = Label(mainWindow_larghezzaFrame,text = 'Inserisci larghezza:',background='#1E1E24',foreground='white',font=(font_One,16))
+        larghezzaLabel.grid(column=0,row=2)
+        larghezzaEntry = Entry(mainWindow_larghezzaFrame,textvariable=larghezza,font=(font_One,14))
+        larghezzaEntry.grid(column=0,row=3,padx=10,pady=5)
+        return larghezza
+    larghezza = crea_larghezzaFrame()
+
+    def crea_altezzaFrame():
+        mainWindow_altezzaFrame = Frame(mainWindow_inputFrame,background='#1E1E24')
+        mainWindow_altezzaFrame.pack(padx=15,pady=20)
+        altezza = StringVar()
+        altezzaLabel = Label(mainWindow_altezzaFrame,text = 'Inserisci altezza:',background='#1E1E24',foreground='white',font=(font_One,16))
+        altezzaLabel.grid(column=0,row=4)
+        altezzaEntry = Entry(mainWindow_altezzaFrame,textvariable=altezza,font=(font_One,14))
+        altezzaEntry.grid(column=0,row=5,padx=10,pady=5)
+        return altezza
+    altezza = crea_altezzaFrame()
+
+    def crea_spessoreFrame():
+        mainWindow_spessoreFrame = Frame(mainWindow_inputFrame,background='#1E1E24')
+        mainWindow_spessoreFrame.pack(padx=15,pady=20)
+        spessore = StringVar()
+        spessoreLabel = Label(mainWindow_spessoreFrame,text = 'Inserisci spessore:',background='#1E1E24',foreground='white',font=(font_One,16))
+        spessoreLabel.grid(column=0,row=6)
+        spessoreEntry = Entry(mainWindow_spessoreFrame,textvariable=spessore,font=(font_One,14))
+        spessoreEntry.grid(column=0,row=7,padx=10,pady=5)
+        return spessore
+    spessore = crea_spessoreFrame()
     
-    mainWindow_altezzaFrame = Frame(mainWindow_inputFrame,background='#1E1E24')
-    mainWindow_altezzaFrame.pack(padx=15,pady=20)
-    altezza = StringVar()
-    altezzaLabel = Label(mainWindow_altezzaFrame,text = 'Inserisci altezza:',background='#1E1E24',foreground='white',font=(font_One,16))
-    altezzaLabel.grid(column=0,row=4)
-    altezzaEntry = Entry(mainWindow_altezzaFrame,textvariable=altezza,font=(font_One,14))
-    altezzaEntry.grid(column=0,row=5,padx=10,pady=5)
-    
-
-    mainWindow_spessoreFrame = Frame(mainWindow_inputFrame,background='#1E1E24')
-    mainWindow_spessoreFrame.pack(padx=15,pady=20)
-    spessore = StringVar()
-    spessoreLabel = Label(mainWindow_spessoreFrame,text = 'Inserisci spessore:',background='#1E1E24',foreground='white',font=(font_One,16))
-    spessoreLabel.grid(column=0,row=6)
-    spessoreEntry = Entry(mainWindow_spessoreFrame,textvariable=spessore,font=(font_One,14))
-    spessoreEntry.grid(column=0,row=7,padx=10,pady=5)
-
-
     # Primo bottone
-    button1 = Button(mainWindow_buttonFrame, text="AGGIUNGI",font =(font_One,18),width=15, height=2)
+    button1 = Button(mainWindow_buttonFrame, text="AGGIUNGI",
+                     command = lambda:aggiungi(tipo.get(),larghezza.get(),altezza.get(),spessore.get()), font =(font_One,18),width=15, height=2)
     button1.pack(padx=10,pady=35)
     
     # Secondo bottone
@@ -125,7 +154,8 @@ def create_main_window():
     button2.pack(padx=10,pady=35)
     
     # Terzo bottone largo quanto i due precedenti insieme
-    button3 = Button(mainWindow_buttonFrame, text="CALCOLA", command=lambda:calcola(tipo.get(),larghezza.get(),altezza.get(),spessore.get()),font =(font_One,18),width=15, height=2)
+    button3 = Button(mainWindow_buttonFrame, text="CALCOLA",
+                     command=lambda:calcola(tipo.get(),larghezza.get(),altezza.get(),spessore.get()),font =(font_One,18),width=15, height=2)
     button3.pack(padx=10,pady=35)
 
     mainWindow.mainloop()

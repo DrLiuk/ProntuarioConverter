@@ -48,6 +48,11 @@ def pesoTeoricoDaMisure(tipo,larghezza,altezza,spessore):
    #creare msg Box
    return 0  
 
+def aggiungi_prodotto(tipo,larghezza,altezza,spessore,peso):
+   f = open(fName,'a')
+   f.write(f'{tipo}-{larghezza}x{altezza}x{spessore} | {peso}\n')
+   f.close()
+   
 def mtToKg(metri,peso):
    return peso*metri
 
