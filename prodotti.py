@@ -6,9 +6,8 @@ class Prodotto:
     def __init__(self, cod):
        self.codice = cod
 
-    def print(self):
-       print(self.codice)
-       print("... Kg/m")
+    def print(self,peso):
+       print(f"{self.codice} - {peso} Kg/m")
 
 def calcolaPesoTeorico(cod):
    f = open(fName,"r")
@@ -34,17 +33,18 @@ def pesoTeoricoDaMisure(tipo,larghezza,altezza,spessore):
    righe = f.readlines()
    f.close()
 
-   print(righe)
    codMis1 = (f'{larghezza}x{altezza}x{spessore}')
    codMis2 = (f'{altezza}x{larghezza}x{spessore}')
-
+ 
    for riga in righe:
       riga = riga.strip()
       dati = riga.split('-')
       if dati[0] == tipo:
-         if dati[1] == codMis1 or dati[1] == codMis2:
-            dati = riga.split('|')
-            return int(dati[1])
+         cod = dati[1].split('|')
+         cod[0] = cod[0].strip()
+         cod[1] = cod[1].strip()
+         if cod[0] == codMis1 or cod[0] == codMis2:
+            return float(cod[1])
    #creare msg Box
    return 0  
 
