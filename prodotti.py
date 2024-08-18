@@ -65,17 +65,17 @@ def modifica_prodotto_daCodice(codice,peso):
    f = open(fName,"r")
    righe = f.readlines()
    f.close()
-   print(codice)
+   i = 0
    for riga in righe:
       riga = riga.strip()
       dati = riga.split('|')
       cod = dati[0]
       cod = cod.strip()
       if cod == codice:
-         riga = (f'{codice} | {peso}')
+         righe[i] = (f'{codice} | {peso}\n')
          trovato = True
          break
-
+      i+=1
    f = open(fName,"w")
    f.writelines(righe)
    f.close()
