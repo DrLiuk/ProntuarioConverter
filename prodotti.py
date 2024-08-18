@@ -61,6 +61,7 @@ def aggiungi_prodotto_daCodice(codice,peso):
    f.close()
 
 def modifica_prodotto_daCodice(codice,peso):
+   trovato = False
    f = open(fName,"r")
    righe = f.readlines()
    f.close()
@@ -72,12 +73,13 @@ def modifica_prodotto_daCodice(codice,peso):
       cod = cod.strip()
       if cod == codice:
          riga = (f'{codice} | {peso}')
-         print(dati[1])
+         trovato = True
          break
 
    f = open(fName,"w")
    f.writelines(righe)
    f.close()
+   return trovato
    
 def mtToKg(metri,peso):
    return peso*metri

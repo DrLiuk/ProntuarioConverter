@@ -74,9 +74,9 @@ def aggiungi(tipo,misure,frameCall):
 
     def aggiungi_elemento():
         #Se prodotto già esiste modifica peso Teorico con nuovo valore inserito
-        prodotti.modifica_prodotto_daCodice(codice_prodotto,pesoTeoricoEntry.get())
+        if not prodotti.modifica_prodotto_daCodice(codice_prodotto,pesoTeoricoEntry.get()):
         #Se prodotto non esiste lo crea
-        prodotti.aggiungi_prodotto_daCodice(codice_prodotto,pesoTeoricoEntry.get())
+            prodotti.aggiungi_prodotto_daCodice(codice_prodotto,pesoTeoricoEntry.get())
         aggiungiWindow.destroy()
         frameOP.chiudi_frame(frameCall)
 
