@@ -89,6 +89,29 @@ def aggiungi(tipo,misure,frameCall):
     aggiungiProdottoButton = Button (aggiungiWindow,text='Aggiungi',command=lambda:aggiungi_elemento())
     aggiungiProdottoButton.pack(side='right',expand=True)
 
+def mostra():
+    mostraWindow = Tk()
+    mostraWindow.geometry('570x400+570+260')
+    mostraWindow.title('Elenco prodotti')
+    mostraWindow.resizable(False,False)
+ 
+    prods = prodotti.crea_lista_prodotti()
+
+    listbox = Listbox(mostraWindow,height=20,width=40,selectmode='single',font=('Helvetiva',14))
+    listbox.pack(fill=BOTH,expand=True,side='left')
+
+    i=0
+    for prod in prods:
+        listbox.insert(i,(f'{prod} kg/m'))
+        i+=1
+        listbox.insert(i,'')
+        i+=1
+
+    scrollBar = ttk.Scrollbar(mostraWindow, orient='vertical',command=listbox.yview)
+    scrollBar.pack(fill=Y,side='right')
+
+    listbox['yscrollcommand'] =scrollBar.set
+
 def create_main_window():
     mainWindow = Tk()
     mainWindow.title('Convertitore pesi prontuario')
@@ -146,16 +169,17 @@ def create_main_window():
     mainWindow_buttonFrame = Frame(mainWindow)
     mainWindow_buttonFrame.pack(side='right',fill = BOTH,expand=True)
     
-    # Primo bottone
+    # Bottone AGGIUNGI/MODIFICA
     button1 = Button(mainWindow_buttonFrame, text="AGGIUNGI",
                      command = lambda:aggiungi(tipo.get(),frameNeeded,mainWindow_inputFrame[0]), font =(font_One,18),width=15, height=2)
     button1.pack(padx=10,pady=35)
     
-    # Secondo bottone
-    button2 = Button(mainWindow_buttonFrame, text="MODIFICA",font =(font_One,18),width=15, height=2)
+    # Bottone MOSTRA
+    button2 = Button(mainWindow_buttonFrame, text="MOSTRA",
+                     command = lambda:mostra(), font =(font_One,18),width=15, height=2)
     button2.pack(padx=10,pady=35)
     
-    # Terzo bottone largo quanto i due precedenti insieme
+    # Bottone CALCOLA
     button3 = Button(mainWindow_buttonFrame, text="CALCOLA",
                      command=lambda:calcola(tipo.get(),frameNeeded,mainWindow_inputFrame[0]),font =(font_One,18),width=15, height=2)
     button3.pack(padx=10,pady=35)

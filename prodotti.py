@@ -81,6 +81,12 @@ def modifica_prodotto_daCodice(codice,peso):
    f.close()
    return trovato
    
+def crea_lista_prodotti():
+   f = open(fName,'r')
+   righe = f.readlines()
+   f.close()
+   return righe
+
 def mtToKg(metri,peso):
    return peso*metri
 
