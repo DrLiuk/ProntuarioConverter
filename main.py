@@ -3,7 +3,6 @@ from tkinter import ttk
 import prodotti
 import frameOperator as frameOP
 
-elencoPesiProdotti = 'pesi_teorici_ferro.txt'
 font_One = 'Arial'
 
 
@@ -102,7 +101,7 @@ def mostra():
 
     i=0
     for prod in prods:
-        listbox.insert(i,(f'{prod} kg/m'))
+        listbox.insert(i,prod)
         i+=1
         listbox.insert(i,'')
         i+=1
@@ -128,22 +127,27 @@ def create_main_window():
     mainWindow_leftFrame = Frame(mainWindow,background='#1E1E24',padx=50)
     mainWindow_leftFrame.pack(side='left',fill=BOTH,expand=True)
 
-    #tipoFrame con combobox per selezione tipo e GUI
+    #TIPO Frame con combobox per selezione tipo e GUI
     mainWindow_tipoFrame = Frame(mainWindow_leftFrame,background='#1E1E24',padx=50,pady=15)
     mainWindow_tipoFrame.pack(fill=BOTH,expand=False)
+
     tipo = StringVar()
+    tipi = {
+        'Tubolare' : 'tb',
+        'Piatto' : 'pt',
+        'Tubo tondo' : 'tt',
+        'Tondo pieno' : 'td',
+        'Quadro pieno' : 'qd',
+    }
+
     tipoLabel = Label(mainWindow_tipoFrame,text = 'Inserisci tipo:',background='#1E1E24',foreground='white',font=(font_One,16))
     tipoLabel.pack()
-    tipoBox = ttk.Combobox(mainWindow_tipoFrame,textvariable= tipo,font=(font_One,14))
-    tipoBox['values'] = ['tubo','piatto','quadro','tondo']
+    tipoBox = ttk.Combobox(mainWindow_tipoFrame,textvariable = tipo,font=(font_One,14))
+    tipoBox['values'] = list(tipi.keys())
     tipoBox['state'] = 'readonly'
     tipoBox.pack()
 
     # Frame per input
-    larghezza = StringVar()
-    altezza = StringVar()
-    spessore = StringVar()
-
     mainWindow_inputFrame = [frameOP.crea_InputFrame(mainWindow_leftFrame)]
     frameNeeded = []
     def scegli_input(frame,needed):
@@ -151,15 +155,26 @@ def create_main_window():
         frame.pop()
         frame.append(frameOP.crea_InputFrame(mainWindow_leftFrame))
         needed.clear()
-        if tipoBox.get() == 'tubo':
+        inputTipo = tipi[tipo.get()]
+        if inputTipo == 'tb':
             larghezza = frameOP.crea_larghezzaFrame(frame[0])
             altezza = frameOP.crea_altezzaFrame(frame[0])
             spessore = frameOP.crea_spessoreFrame(frame[0])
             needed.extend([larghezza,altezza,spessore])
-        elif tipoBox.get() == 'piatto':
+        elif inputTipo == 'pt':
             larghezza = frameOP.crea_larghezzaFrame(frame[0])
             spessore = frameOP.crea_spessoreFrame(frame[0])
             needed.extend([larghezza,spessore])
+        elif inputTipo == 'tt':
+            diametro = frameOP.crea_diametroFrame(frame[0])
+            spessore = frameOP.crea_spessoreFrame(frame[0])
+            needed.extend([diametro,spessore])
+        elif inputTipo == 'td':
+            diametro = frameOP.crea_diametroFrame(frame[0])
+            needed.extend([diametro])
+        elif inputTipo == 'qd':
+            larghezza = frameOP.crea_larghezzaFrame(frame[0])
+            needed.extend([larghezza])
         else:
             pass
     
@@ -171,7 +186,7 @@ def create_main_window():
     
     # Bottone AGGIUNGI/MODIFICA
     button1 = Button(mainWindow_buttonFrame, text="AGGIUNGI",
-                     command = lambda:aggiungi(tipo.get(),frameNeeded,mainWindow_inputFrame[0]), font =(font_One,18),width=15, height=2)
+                     command = lambda:aggiungi(tipi[tipo.get()],frameNeeded,mainWindow_inputFrame[0]), font =(font_One,18),width=15, height=2)
     button1.pack(padx=10,pady=35)
     
     # Bottone MOSTRA
@@ -181,9 +196,10 @@ def create_main_window():
     
     # Bottone CALCOLA
     button3 = Button(mainWindow_buttonFrame, text="CALCOLA",
-                     command=lambda:calcola(tipo.get(),frameNeeded,mainWindow_inputFrame[0]),font =(font_One,18),width=15, height=2)
+                     command=lambda:calcola(tipi[tipo.get()],frameNeeded,mainWindow_inputFrame[0]),font =(font_One,18),width=15, height=2)
     button3.pack(padx=10,pady=35)
     mainWindow.mainloop()
+
 
 # Esecuzione della funzione per la creazione della finestra principale
 create_main_window()

@@ -38,5 +38,15 @@ def crea_spessoreFrame(frame):
     spessoreEntry.pack()
     return spessore
 
+def crea_diametroFrame(frame):
+    mainWindow_diametroFrame = Frame(frame,background='#1E1E24')
+    mainWindow_diametroFrame.pack(padx=15,pady=20)
+    diametro = StringVar()
+    diametroLabel = Label(mainWindow_diametroFrame,text = 'Inserisci diametro:',background='#1E1E24',foreground='white',font=(font_One,16))
+    diametroLabel.pack()
+    diametroEntry = Entry(mainWindow_diametroFrame,textvariable=diametro,font=(font_One,14))
+    diametroEntry.pack()
+    return diametro
+
 def chiudi_frame(frame):
     frame.destroy()

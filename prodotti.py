@@ -2,6 +2,15 @@
 #Inizializzazione variabile per FILE.txt elenco pesi teorici elementi
 fName = 'pesi_teorici_ferro.txt'
 
+tipi = {
+   'tb' : 'Tubolare',
+   'pt' : 'Piatto',
+   'tt' : 'Tubo tondo',
+   'td' : 'Tondo pieno',
+   'qd' : 'Quadro pieno',
+    }
+
+
 class Prodotto:
     def __init__(self, cod):
        self.codice = cod
@@ -85,6 +94,15 @@ def crea_lista_prodotti():
    f = open(fName,'r')
    righe = f.readlines()
    f.close()
+
+   i=0
+   for riga in righe:
+      dati = riga.split('-')
+      tipoCompleto = tipi[dati[0]]
+      dati = dati[1].split('|')
+      righe[i] = (f'{tipoCompleto} - {dati[0]}  Peso: {dati[1]} Kg/m')
+      i+=1
+
    return righe
 
 def mtToKg(metri,peso):
