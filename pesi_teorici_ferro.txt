@@ -22,4 +22,3 @@ quadro-30 | 7.07
 quadro-40 | 12.56
 quadro-50 | 19.62
 quadro-60 | 28.26
-
