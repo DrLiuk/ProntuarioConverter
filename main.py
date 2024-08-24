@@ -5,8 +5,13 @@ import frameOperator as frameOP
 
 font_One = 'Times New Roman'
 
+def crea_prodotto(prodotto):
+    if prodotto[0] == "tb":
+        return prodotti.Tubolare(prodotto[1],prodotto[2],prodotto[3])
+    else:
+        pass
 
-def calcola(tipo,misure,frameCall):
+def calcola(prodotto,frameCall):
     calcolaWindow = Tk()
     calcolaWindow.geometry('570x180+570+260')
     calcolaWindow.resizable(False,False)
@@ -14,17 +19,18 @@ def calcola(tipo,misure,frameCall):
     calcolaWindow.rowconfigure(2,weight=1)
 
     frameOP.chiudi_frame(frameCall)
+    prod = crea_prodotto(prodotto)
 
     def converti():
         entryFocus = calcolaWindow.focus_get()
         #metriEntry.index('end') == 0
         #kiliEntry.index('end') == 0
         if entryFocus == kiliEntry:
-            metriRes = '{:.2f}'.format(prodotti.kgToMt(float(kiliEntry.get()),pesoTeorico))
+            metriRes = '{:.2f}'.format(prod.kgToMt(float(kiliEntry.get())))
             metriEntry.delete(0,END)
             metriEntry.insert(0,metriRes)
         elif entryFocus == metriEntry:
-            kiliRes = '{:.2f}'.format(prodotti.mtToKg(float(metriEntry.get()),pesoTeorico))
+            kiliRes = '{:.2f}'.format(prod.mtToKg(float(metriEntry.get())))
             kiliEntry.delete(0,END)
             kiliEntry.insert(0,kiliRes)
         else:
@@ -32,15 +38,7 @@ def calcola(tipo,misure,frameCall):
             #Msgbox per errore inserimento
             pass
 
-    #Creazione codice misure in base all'array misure passato
-    codice_prodotto = tipo + "-"
-    for misura in misure:
-        codice_prodotto += (misura.get() +'x')
-    codice_prodotto = codice_prodotto[:-1]
-
-    calcolaWindow.title(codice_prodotto) # SETTAGGIO TITOLO FINESTRA CON CODICE PRODOTTO
-
-    pesoTeorico = prodotti.getPesoTeorico_daCodice(codice_prodotto)
+    calcolaWindow.title(prod.codice) # SETTAGGIO TITOLO FINESTRA CON CODICE PRODOTTO
 
     #Creazione GUI
     metriLabel = Label(calcolaWindow,text='METRI',font=(font_One,18),padx=10,pady=10)
@@ -60,22 +58,18 @@ def calcola(tipo,misure,frameCall):
     calcolaPesoButton = Button (calcolaWindow,text='Calcola',command=lambda:converti())
     calcolaPesoButton.grid(column=0,row=3,columnspan=3,pady=15)
 
-def aggiungi(tipo,misure,frameCall):
+def aggiungi(prodotto,frameCall):
     aggiungiWindow = Tk()
     aggiungiWindow.title('Aggiungi...')
     aggiungiWindow.geometry('570x180+570+260')
     aggiungiWindow.resizable(False,False)
-    #Creazione codice misure in base all'array misure passato
-    codice_prodotto = tipo + "-"
-    for misura in misure:
-        codice_prodotto += (misura.get() +'x')
-    codice_prodotto = codice_prodotto[:-1]
 
+    prod = prodotto[0]
     def aggiungi_elemento():
         #Se prodotto già esiste modifica peso Teorico con nuovo valore inserito
-        if not prodotti.modifica_prodotto_daCodice(codice_prodotto,pesoTeoricoEntry.get()):
+        if not prod.modifica_prodotto(prod.codice,pesoTeoricoEntry.get()):
         #Se prodotto non esiste lo crea
-            prodotti.aggiungi_prodotto_daCodice(codice_prodotto,pesoTeoricoEntry.get())
+            prod.aggiungi_prodotto(prod.codice,pesoTeoricoEntry.get())
         aggiungiWindow.destroy()
         frameOP.chiudi_frame(frameCall)
 
@@ -101,7 +95,7 @@ def mostra():
 
     i=0
     for prod in prods:
-        listbox.insert(i,prod)
+        listbox.insert(i,prod.stampa_prodotto())
         i+=1
         listbox.insert(i,'')
         i+=1
@@ -150,36 +144,38 @@ def create_main_window():
 
     # Frame per input
     mainWindow_inputFrame = [frameOP.crea_InputFrame(mainWindow_leftFrame)]
-    frameNeeded = []
-    def scegli_input(frame,needed):
-        frameOP.chiudi_frame(frame[0])
-        frame.pop()
-        frame.append(frameOP.crea_InputFrame(mainWindow_leftFrame))
-        needed.clear()
-        inputTipo = tipi[tipo.get()]
+    prodotto = []
+    
+    def scegli_input():
+        frameOP.chiudi_frame(mainWindow_inputFrame[0])
+        mainWindow_inputFrame.pop()
+        mainWindow_inputFrame.append(frameOP.crea_InputFrame(mainWindow_leftFrame))
+        prodotto.clear()
+        inputTipo = tipo.get()
         if inputTipo == 'tb':
-            larghezza = frameOP.crea_larghezzaFrame(frame[0])
-            altezza = frameOP.crea_altezzaFrame(frame[0])
-            spessore = frameOP.crea_spessoreFrame(frame[0])
-            needed.extend([larghezza,altezza,spessore])
+            larghezza = frameOP.crea_larghezzaFrame(mainWindow_inputFrame[0])
+            altezza = frameOP.crea_altezzaFrame(mainWindow_inputFrame[0])
+            spessore = frameOP.crea_spessoreFrame(mainWindow_inputFrame[0])
+            prodotto.append([inputTipo,larghezza,altezza,spessore])
         elif inputTipo == 'pt':
-            larghezza = frameOP.crea_larghezzaFrame(frame[0])
-            spessore = frameOP.crea_spessoreFrame(frame[0])
-            needed.extend([larghezza,spessore])
+            larghezza = frameOP.crea_larghezzaFrame(mainWindow_inputFrame[0])
+            spessore = frameOP.crea_spessoreFrame(mainWindow_inputFrame[0])
+            prd = prodotti.Piatto(larghezza.get(),spessore.get())
+            prodotto.append(prd)
         elif inputTipo == 'tt':
-            diametro = frameOP.crea_diametroFrame(frame[0])
-            spessore = frameOP.crea_spessoreFrame(frame[0])
-            needed.extend([diametro,spessore])
+            diametro = frameOP.crea_diametroFrame(mainWindow_inputFrame[0])
+            spessore = frameOP.crea_spessoreFrame(mainWindow_inputFrame[0])
+            #needed.extend([diametro,spessore])
         elif inputTipo == 'td':
-            diametro = frameOP.crea_diametroFrame(frame[0])
-            needed.extend([diametro])
+            diametro = frameOP.crea_diametroFrame(mainWindow_inputFrame[0])
+            #needed.extend([diametro])
         elif inputTipo == 'qd':
-            larghezza = frameOP.crea_larghezzaFrame(frame[0])
-            needed.extend([larghezza])
+            larghezza = frameOP.crea_larghezzaFrame(mainWindow_inputFrame[0])
+            #needed.extend([larghezza])
         else:
             pass
     
-    tipoBox.bind("<<ComboboxSelected>>",lambda x:scegli_input(mainWindow_inputFrame,frameNeeded))
+    tipoBox.bind("<<ComboboxSelected>>",lambda x:scegli_input())
 
     # Frame per contenere i bottoni
     mainWindow_buttonFrame = Frame(mainWindow)
@@ -187,7 +183,7 @@ def create_main_window():
     
     # Bottone AGGIUNGI/MODIFICA
     button1 = Button(mainWindow_buttonFrame, text="AGGIUNGI",
-                     command = lambda:aggiungi(tipi[tipo.get()],frameNeeded,mainWindow_inputFrame[0]), font =(font_One,18),width=15, height=2)
+                     command = lambda:aggiungi(prodotto,mainWindow_inputFrame[0]), font =(font_One,18),width=15, height=2)
     button1.pack(padx=10,pady=35)
     
     # Bottone MOSTRA
@@ -197,7 +193,7 @@ def create_main_window():
     
     # Bottone CALCOLA
     button3 = Button(mainWindow_buttonFrame, text="CALCOLA",
-                     command=lambda:calcola(tipi[tipo.get()],frameNeeded,mainWindow_inputFrame[0]),font =(font_One,18),width=15, height=2)
+                     command=lambda:calcola(prodotto,mainWindow_inputFrame[0]),font =(font_One,18),width=15, height=2)
     button3.pack(padx=10,pady=35)
     mainWindow.mainloop()
 
