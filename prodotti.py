@@ -15,18 +15,15 @@ class Prodotto:
       self.codice = cod
    
    def get_pesoT(self):
-      try:
-         f = open(fName,"r")
-         righe = f.readlines()
-         f.close()
-         for riga in righe:
-            riga = riga.strip()
-            dati = riga.split('|')
-            if dati[0].strip() == self.codice:
-               pesoT = dati[1].strip()
-               return pesoT
-      except:
-         print("Prodotto non presente")
+      f = open(fName,"r")
+      righe = f.readlines()
+      f.close()
+      for riga in righe:
+         riga = riga.strip()
+         dati = riga.split('|')
+         if dati[0].strip() == self.codice:
+            pesoT = dati[1].strip()
+            return pesoT
 
    def stampa_prodotto(self):
       return (f"{self.codice}    {self.get_pesoT()} Kg/m")
@@ -65,7 +62,8 @@ class Prodotto:
       return pesoT*metri
 
    def kgToMt(self,kili):
-      return kili/self.get_pesoT()
+      pesoT = float(self.get_pesoT())
+      return kili/pesoT
   
 
 def crea_lista_prodotti():
@@ -89,7 +87,7 @@ class Tubolare(Prodotto):
       self.larghezza = larghezza
       self.altezza = altezza
       self.spessore = spessore
-      codice = (f"{self.tipo}{self.larghezza}x{self.altezza}x{self.spessore}")
+      codice = (f"{self.tipo}-{self.larghezza}x{self.altezza}x{self.spessore}")
       super().__init__(codice)
    
    def stampa_tubolare(self):
@@ -97,10 +95,35 @@ class Tubolare(Prodotto):
 
 class Piatto(Prodotto):
    def __init__(self,larghezza,spessore):
-      self.tipo = "tb"
+      self.tipo = "pt"
       self.larghezza = larghezza
       self.spessore = spessore
-      codice = (f"{self.tipo}{self.larghezza}x{self.spessore}")
+      codice = (f"{self.tipo}-{self.larghezza}x{self.spessore}")
       super().__init__(codice)
    def stampa_piatto(self):
       print(f"Piatto {self.larghezza}x{self.spessore}\tPeso Teorico:{self.pesoT}")
+
+class TuboTondo(Prodotto):
+   def __init__(self,diametro,spessore):
+      self.tipo = "tt"
+      self.diametro = diametro
+      self.spessore = spessore
+      codice = (f"{self.tipo}-{self.diametro}x{self.spessore}")
+      super().__init__(codice)
+
+class TondoPieno(Prodotto):
+   def __init__(self,diametro):
+      self.tipo = "tp"
+      self.diametro = diametro
+      codice = (f"{self.tipo}-{self.diametro}")
+      super().__init__(codice)
+
+class RettangoloPieno(Prodotto):
+   def __init__(self,larghezza,altezza):
+      self.tipo = "rp"
+      self.larghezza = larghezza
+      self.altezza = altezza
+      codice = (f"{self.tipo}-{self.larghezza}x{self.altezza}")
+      super().__init__(codice)
+
+

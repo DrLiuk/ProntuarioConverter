@@ -7,9 +7,17 @@ font_One = 'Times New Roman'
 
 def crea_prodotto(prodotto):
     if prodotto[0] == "tb":
-        return prodotti.Tubolare(prodotto[1],prodotto[2],prodotto[3])
+        return prodotti.Tubolare(prodotto[1].get(),prodotto[2].get(),prodotto[3].get())
+    if prodotto[0] == "pt":
+        return prodotti.Piatto(prodotto[1].get(),prodotto[2].get())
+    if prodotto[0] == "tt":
+        return prodotti.TuboTondo(prodotto[1].get(),prodotto[2].get())
+    if prodotto[0] == "tp":
+        return prodotti.TondoPieno(prodotto[1].get())
+    if prodotto[0] == "rp":
+        return prodotti.RettangoloPieno(prodotto[1].get(),prodotto[2].get())
     else:
-        pass
+        print("tipo prodotto passato non riconosciuto")
 
 def calcola(prodotto,frameCall):
     calcolaWindow = Tk()
@@ -20,6 +28,8 @@ def calcola(prodotto,frameCall):
 
     frameOP.chiudi_frame(frameCall)
     prod = crea_prodotto(prodotto)
+
+    calcolaWindow.title(prod.codice) # SETTAGGIO TITOLO FINESTRA CON CODICE PRODOTTO
 
     def converti():
         entryFocus = calcolaWindow.focus_get()
@@ -37,8 +47,6 @@ def calcola(prodotto,frameCall):
             print('errore di calcolo')
             #Msgbox per errore inserimento
             pass
-
-    calcolaWindow.title(prod.codice) # SETTAGGIO TITOLO FINESTRA CON CODICE PRODOTTO
 
     #Creazione GUI
     metriLabel = Label(calcolaWindow,text='METRI',font=(font_One,18),padx=10,pady=10)
@@ -130,8 +138,8 @@ def create_main_window():
         'Tubolare' : 'tb',
         'Piatto' : 'pt',
         'Tubo tondo' : 'tt',
-        'Tondo pieno' : 'td',
-        'Quadro pieno' : 'qd',
+        'Tondo pieno' : 'tp',
+        'Rettangolo pieno' : 'rp',
     }
 
     tipoLabel = Label(mainWindow_tipoFrame,text = 'Inserisci tipo:',background='#1E1E24',foreground='white',font=(font_One,16))
@@ -151,29 +159,29 @@ def create_main_window():
         mainWindow_inputFrame.pop()
         mainWindow_inputFrame.append(frameOP.crea_InputFrame(mainWindow_leftFrame))
         prodotto.clear()
-        inputTipo = tipo.get()
+        inputTipo = tipi[tipo.get()]
         if inputTipo == 'tb':
             larghezza = frameOP.crea_larghezzaFrame(mainWindow_inputFrame[0])
             altezza = frameOP.crea_altezzaFrame(mainWindow_inputFrame[0])
             spessore = frameOP.crea_spessoreFrame(mainWindow_inputFrame[0])
-            prodotto.append([inputTipo,larghezza,altezza,spessore])
+            prodotto.extend([inputTipo,larghezza,altezza,spessore])
         elif inputTipo == 'pt':
             larghezza = frameOP.crea_larghezzaFrame(mainWindow_inputFrame[0])
             spessore = frameOP.crea_spessoreFrame(mainWindow_inputFrame[0])
-            prd = prodotti.Piatto(larghezza.get(),spessore.get())
-            prodotto.append(prd)
+            prodotto.extend([inputTipo,larghezza,spessore])
         elif inputTipo == 'tt':
             diametro = frameOP.crea_diametroFrame(mainWindow_inputFrame[0])
             spessore = frameOP.crea_spessoreFrame(mainWindow_inputFrame[0])
-            #needed.extend([diametro,spessore])
-        elif inputTipo == 'td':
+            prodotto.extend([inputTipo,diametro,spessore])
+        elif inputTipo == 'tp':
             diametro = frameOP.crea_diametroFrame(mainWindow_inputFrame[0])
-            #needed.extend([diametro])
-        elif inputTipo == 'qd':
+            prodotto.extend([inputTipo,diametro])
+        elif inputTipo == 'rp':
             larghezza = frameOP.crea_larghezzaFrame(mainWindow_inputFrame[0])
-            #needed.extend([larghezza])
+            altezza = frameOP.crea_altezzaFrame(mainWindow_inputFrame[0])
+            prodotto.extend([inputTipo,larghezza,altezza])
         else:
-            pass
+            print("Errore comboBox")
     
     tipoBox.bind("<<ComboboxSelected>>",lambda x:scegli_input())
 
