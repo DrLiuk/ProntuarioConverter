@@ -1,6 +1,7 @@
 
 #Inizializzazione variabile per FILE.txt elenco pesi teorici elementi
-fName = 'pesi_teorici_ferro.txt'
+filePiatti = 'dataFile/piattiProntuario.txt'
+fileTubolari = 'dataFile/tubolariProntuario.txt'
 
 tipi = {
    'tb' : 'Tubolare',
@@ -15,7 +16,11 @@ class Prodotto:
       self.codice = cod
    
    def get_pesoT(self):
-      f = open(fName,"r")
+      tipo = self.codice[0]+self.codice[1]
+      if tipo == "tb" : file = fileTubolari
+      elif tipo == "pt" : file = filePiatti
+      else : pass
+      f = open(file,"r")
       righe = f.readlines()
       f.close()
       for riga in righe:
@@ -57,15 +62,12 @@ class Prodotto:
       except:
          print("Prodotto non presente")
 
-   def mtToKg(self,metri):
-      pesoT = float(self.get_pesoT())
+   def mtToKg(self,pesoT,metri):
       return pesoT*metri
 
-   def kgToMt(self,kili):
-      pesoT = float(self.get_pesoT())
+   def kgToMt(self,pesoT,kili):
       return kili/pesoT
   
-
 def crea_lista_prodotti():
    f = open(fName,'r')
    righe = f.readlines()
@@ -93,6 +95,18 @@ class Tubolare(Prodotto):
    def stampa_tubolare(self):
       print(f"Tubolare {self.larghezza}x{self.altezza}x{self.spessore}\tPeso Teorico:{self.pesoT}")
 
+   def get_pesoT(self):
+      f = open(fileTubolari,"r")
+      righe = f.readlines()
+      f.close()
+      for riga in righe:
+         riga = riga.strip()
+         dati = riga.split('|')
+         if dati[0].strip() == self.codice:
+            pesoT = dati[1].strip()
+            return pesoT
+
+      
 class Piatto(Prodotto):
    def __init__(self,larghezza,spessore):
       self.tipo = "pt"
@@ -102,6 +116,17 @@ class Piatto(Prodotto):
       super().__init__(codice)
    def stampa_piatto(self):
       print(f"Piatto {self.larghezza}x{self.spessore}\tPeso Teorico:{self.pesoT}")
+
+   def get_pesoT(self):
+      f = open(filePiatti,"r")
+      righe = f.readlines()
+      f.close()
+      for riga in righe:
+         riga = riga.strip()
+         dati = riga.split('|')
+         if dati[0].strip() == self.codice:
+            pesoT = dati[1].strip()
+            return pesoT
 
 class TuboTondo(Prodotto):
    def __init__(self,diametro,spessore):

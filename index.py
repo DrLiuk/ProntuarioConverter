@@ -36,11 +36,11 @@ def calcola(prodotto,frameCall):
         #metriEntry.index('end') == 0
         #kiliEntry.index('end') == 0
         if entryFocus == kiliEntry:
-            metriRes = '{:.2f}'.format(prod.kgToMt(float(kiliEntry.get())))
+            metriRes = '{:.2f}'.format(prod.kgToMt(float(prod.get_pesoT()),float(kiliEntry.get())))
             metriEntry.delete(0,END)
             metriEntry.insert(0,metriRes)
         elif entryFocus == metriEntry:
-            kiliRes = '{:.2f}'.format(prod.mtToKg(float(metriEntry.get())))
+            kiliRes = '{:.2f}'.format(prod.mtToKg(float(prod.get_pesoT()),float(metriEntry.get())))
             kiliEntry.delete(0,END)
             kiliEntry.insert(0,kiliRes)
         else:
@@ -66,7 +66,7 @@ def calcola(prodotto,frameCall):
     calcolaPesoButton = Button (calcolaWindow,text='Calcola',command=lambda:converti())
     calcolaPesoButton.grid(column=0,row=3,columnspan=3,pady=15)
 
-def aggiungi(prodotto,frameCall):
+""" def aggiungi(prodotto,frameCall):
     aggiungiWindow = Tk()
     aggiungiWindow.title('Aggiungi...')
     aggiungiWindow.geometry('570x180+570+260')
@@ -89,7 +89,7 @@ def aggiungi(prodotto,frameCall):
 
     aggiungiProdottoButton = Button (aggiungiWindow,text='Aggiungi',command=lambda:aggiungi_elemento())
     aggiungiProdottoButton.pack(side='right',expand=True)
-
+ """
 def mostra():
     mostraWindow = Tk()
     mostraWindow.geometry('570x400+570+260')
