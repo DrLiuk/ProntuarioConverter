@@ -3,7 +3,7 @@ from tkinter import ttk
 import prodotti
 import frameOperator as frameOP
 
-font_One = 'Arial'
+font_One = 'Times New Roman'
 
 
 def calcola(tipo,misure,frameCall):
@@ -120,7 +120,7 @@ def create_main_window():
     # Banner titolo largo in alto
     mainWindow_topFrame = Frame(mainWindow,background = '#931F1D')
     mainWindow_topFrame.pack(side='top',fill= 'x')
-    mainWindow_labBig = Label(mainWindow_topFrame, text="Convertitore pesi e lunghezze",background = '#931F1D',font=(font_One,36),pady=10)
+    mainWindow_labBig = Label(mainWindow_topFrame, text="Convertitore pesi prontuario",background = '#931F1D',font=(font_One,36),pady=10)
     mainWindow_labBig.pack(side=LEFT)
     
     #Frame di sinistra contenente tipoFrame e inputFrame
@@ -142,7 +142,8 @@ def create_main_window():
 
     tipoLabel = Label(mainWindow_tipoFrame,text = 'Inserisci tipo:',background='#1E1E24',foreground='white',font=(font_One,16))
     tipoLabel.pack()
-    tipoBox = ttk.Combobox(mainWindow_tipoFrame,textvariable = tipo,font=(font_One,14))
+    tipoBox = ttk.Combobox(mainWindow_tipoFrame,textvariable = tipo)
+    tipoBox.configure(font=(font_One,14))
     tipoBox['values'] = list(tipi.keys())
     tipoBox['state'] = 'readonly'
     tipoBox.pack()

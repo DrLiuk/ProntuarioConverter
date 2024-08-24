@@ -12,8 +12,9 @@ tipi = {
 
 
 class Prodotto:
-    def __init__(self, cod):
+    def __init__(self, cod,peso):
        self.codice = cod
+       
 
     def print(self,peso):
        print(f"{self.codice} - {peso} Kg/m")
