@@ -1,26 +1,24 @@
 
 #Inizializzazione variabile per FILE.txt elenco pesi teorici elementi
-filePiatti = 'dataFile/piattiProntuario.txt'
-fileTubolari = 'dataFile/tubolariProntuario.txt'
+fileName = "dataFile/pesi_teorici_ferro.txt"
 
 tipi = {
    'tb' : 'Tubolare',
    'pt' : 'Piatto',
    'tt' : 'Tubo tondo',
-   'td' : 'Tondo pieno',
-   'qd' : 'Quadro pieno',
+   'td' : 'Tondo',
+   'qd' : 'Quadro'
     }
 
 class Prodotto:
    def __init__(self, cod):
       self.codice = cod
+
+   def stampa_prodotto(self):
+      return (f"{self.codice}    {self.get_pesoT()} Kg/m")
    
    def get_pesoT(self):
-      tipo = self.codice[0]+self.codice[1]
-      if tipo == "tb" : file = fileTubolari
-      elif tipo == "pt" : file = filePiatti
-      else : pass
-      f = open(file,"r")
+      f = open(fileName,"r")
       righe = f.readlines()
       f.close()
       for riga in righe:
@@ -28,11 +26,8 @@ class Prodotto:
          dati = riga.split('|')
          if dati[0].strip() == self.codice:
             pesoT = dati[1].strip()
-            return pesoT
+            return float(pesoT)
 
-   def stampa_prodotto(self):
-      return (f"{self.codice}    {self.get_pesoT()} Kg/m")
-   
    def aggiungi_prodotto(self,pesoT):
       f = open(fName,'a')
       f.write(f'{self.codice} | {pesoT}\n')
@@ -69,7 +64,7 @@ class Prodotto:
       return kili/pesoT
   
 def crea_lista_prodotti():
-   f = open(fName,'r')
+   f = open(fileName,'r')
    righe = f.readlines()
    f.close()
 
@@ -94,18 +89,6 @@ class Tubolare(Prodotto):
    
    def stampa_tubolare(self):
       print(f"Tubolare {self.larghezza}x{self.altezza}x{self.spessore}\tPeso Teorico:{self.pesoT}")
-
-   def get_pesoT(self):
-      f = open(fileTubolari,"r")
-      righe = f.readlines()
-      f.close()
-      for riga in righe:
-         riga = riga.strip()
-         dati = riga.split('|')
-         if dati[0].strip() == self.codice:
-            pesoT = dati[1].strip()
-            return pesoT
-
       
 class Piatto(Prodotto):
    def __init__(self,larghezza,spessore):
@@ -114,19 +97,9 @@ class Piatto(Prodotto):
       self.spessore = spessore
       codice = (f"{self.tipo}-{self.larghezza}x{self.spessore}")
       super().__init__(codice)
+   
    def stampa_piatto(self):
       print(f"Piatto {self.larghezza}x{self.spessore}\tPeso Teorico:{self.pesoT}")
-
-   def get_pesoT(self):
-      f = open(filePiatti,"r")
-      righe = f.readlines()
-      f.close()
-      for riga in righe:
-         riga = riga.strip()
-         dati = riga.split('|')
-         if dati[0].strip() == self.codice:
-            pesoT = dati[1].strip()
-            return pesoT
 
 class TuboTondo(Prodotto):
    def __init__(self,diametro,spessore):
@@ -136,19 +109,18 @@ class TuboTondo(Prodotto):
       codice = (f"{self.tipo}-{self.diametro}x{self.spessore}")
       super().__init__(codice)
 
-class TondoPieno(Prodotto):
+class Tondo(Prodotto):
    def __init__(self,diametro):
-      self.tipo = "tp"
+      self.tipo = "td"
       self.diametro = diametro
       codice = (f"{self.tipo}-{self.diametro}")
       super().__init__(codice)
 
-class RettangoloPieno(Prodotto):
+class Quadro(Prodotto):
    def __init__(self,larghezza,altezza):
-      self.tipo = "rp"
+      self.tipo = "qd"
       self.larghezza = larghezza
       self.altezza = altezza
       codice = (f"{self.tipo}-{self.larghezza}x{self.altezza}")
       super().__init__(codice)
-
 

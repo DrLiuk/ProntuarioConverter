@@ -12,10 +12,10 @@ def crea_prodotto(prodotto):
         return prodotti.Piatto(prodotto[1].get(),prodotto[2].get())
     if prodotto[0] == "tt":
         return prodotti.TuboTondo(prodotto[1].get(),prodotto[2].get())
-    if prodotto[0] == "tp":
-        return prodotti.TondoPieno(prodotto[1].get())
-    if prodotto[0] == "rp":
-        return prodotti.RettangoloPieno(prodotto[1].get(),prodotto[2].get())
+    if prodotto[0] == "td":
+        return prodotti.Tondo(prodotto[1].get())
+    if prodotto[0] == "qd":
+        return prodotti.Quadro(prodotto[1].get(),prodotto[2].get())
     else:
         print("tipo prodotto passato non riconosciuto")
 
@@ -36,11 +36,11 @@ def calcola(prodotto,frameCall):
         #metriEntry.index('end') == 0
         #kiliEntry.index('end') == 0
         if entryFocus == kiliEntry:
-            metriRes = '{:.2f}'.format(prod.kgToMt(float(prod.get_pesoT()),float(kiliEntry.get())))
+            metriRes = '{:.2f}'.format(prod.kgToMt(prod.get_pesoT(),float(kiliEntry.get())))
             metriEntry.delete(0,END)
             metriEntry.insert(0,metriRes)
         elif entryFocus == metriEntry:
-            kiliRes = '{:.2f}'.format(prod.mtToKg(float(prod.get_pesoT()),float(metriEntry.get())))
+            kiliRes = '{:.2f}'.format(prod.mtToKg(prod.get_pesoT(),float(metriEntry.get())))
             kiliEntry.delete(0,END)
             kiliEntry.insert(0,kiliRes)
         else:
@@ -138,8 +138,8 @@ def create_main_window():
         'Tubolare' : 'tb',
         'Piatto' : 'pt',
         'Tubo tondo' : 'tt',
-        'Tondo pieno' : 'tp',
-        'Rettangolo pieno' : 'rp',
+        'Tondo' : 'td',
+        'Quadro' : 'qd',
     }
 
     tipoLabel = Label(mainWindow_tipoFrame,text = 'Inserisci tipo:',background='#1E1E24',foreground='white',font=(font_One,16))
@@ -173,10 +173,10 @@ def create_main_window():
             diametro = frameOP.crea_diametroFrame(mainWindow_inputFrame[0])
             spessore = frameOP.crea_spessoreFrame(mainWindow_inputFrame[0])
             prodotto.extend([inputTipo,diametro,spessore])
-        elif inputTipo == 'tp':
+        elif inputTipo == 'td':
             diametro = frameOP.crea_diametroFrame(mainWindow_inputFrame[0])
             prodotto.extend([inputTipo,diametro])
-        elif inputTipo == 'rp':
+        elif inputTipo == 'qd':
             larghezza = frameOP.crea_larghezzaFrame(mainWindow_inputFrame[0])
             altezza = frameOP.crea_altezzaFrame(mainWindow_inputFrame[0])
             prodotto.extend([inputTipo,larghezza,altezza])
