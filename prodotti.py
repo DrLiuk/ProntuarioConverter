@@ -5,7 +5,7 @@ fileName = "dataFile/pesi_teorici_ferro.txt"
 tipi = {
    'tb' : 'Tubolare',
    'pt' : 'Piatto',
-   'tt' : 'Tubo tondo',
+   'tt' : 'TuboTondo',
    'td' : 'Tondo',
    'qd' : 'Quadro'
     }
@@ -15,7 +15,10 @@ class Prodotto:
       self.codice = cod
 
    def stampa_prodotto(self):
-      return (f"{self.codice}    {self.get_pesoT()} Kg/m")
+      dati = self.codice.split('-')
+      tipo = tipi[dati[0].strip()]
+      misure = dati[1].strip()
+      return (f"{tipo}  -  {misure}")
    
    def get_pesoT(self):
       f = open(fileName,"r")
@@ -29,14 +32,14 @@ class Prodotto:
             return float(pesoT)
 
    def aggiungi_prodotto(self,pesoT):
-      f = open(fName,'a')
+      f = open(fileName,'a')
       f.write(f'{self.codice} | {pesoT}\n')
       f.close()
    
    def modifica_prodotto(self,newPeso):
       trovato = False
       try:
-         f = open(fName,"r")
+         f = open(fileName,"r")
          righe = f.readlines()
          f.close()
          i = 0
@@ -50,7 +53,7 @@ class Prodotto:
                   trovato = True
                   break
             i+=1
-         f = open(fName,"w")
+         f = open(fileName,"w")
          f.writelines(righe)
          f.close()
          return trovato
@@ -74,6 +77,25 @@ def crea_lista_prodotti():
       cod = dati[0].strip()
       p = Prodotto(cod)
       prodotti_list.append(p)
+
+   return prodotti_list
+
+def crea_lista_prodotti_tabella():
+   f = open(fileName,'r')
+   righe = f.readlines()
+   f.close()
+
+   prodotti_list = []
+   for riga in righe:
+      dati = riga.split('|')
+      id = dati[0].strip()
+      peso_teorico = dati[1].strip()
+      dati = dati[0].split('-')
+      misure = dati[1].strip()
+      tipo = tipi[dati[0].strip()]
+
+      prod = (id,tipo,misure,peso_teorico)
+      prodotti_list.append(prod)
 
    return prodotti_list
 
