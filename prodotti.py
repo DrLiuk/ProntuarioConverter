@@ -1,112 +1,148 @@
 
 #Inizializzazione variabile per FILE.txt elenco pesi teorici elementi
-fName = 'pesi_teorici_ferro.txt'
+fileName = "dataFile/pesi_teorici_ferro.txt"
 
 tipi = {
    'tb' : 'Tubolare',
    'pt' : 'Piatto',
-   'tt' : 'Tubo tondo',
-   'td' : 'Tondo pieno',
-   'qd' : 'Quadro pieno',
+   'tt' : 'TuboTondo',
+   'td' : 'Tondo',
+   'qd' : 'Quadro'
     }
 
-
 class Prodotto:
-    def __init__(self, cod):
-       self.codice = cod
+   def __init__(self, cod):
+      self.codice = cod
 
-    def print(self,peso):
-       print(f"{self.codice} - {peso} Kg/m")
-
-def getPesoTeorico_daCodice(cod):
-   f = open(fName,"r")
-   righe = f.readlines()
-   f.close()
-   cod = cod.strip()
-   dati = cod.split('-')
-   codTipo = dati[0]
-   codMis = dati[1]
-
-   for riga in righe:
-      riga = riga.strip()
-      dati = riga.split('-')
-      if dati[0] == codTipo:
-         cod = dati[1].split('|')
-         cod[0] = cod[0].strip()
-         cod[1] = cod[1].strip()
-         if cod[0] == codMis:
-            return float(cod[1])
-   #creare msg Box
-   return 0.0  
-
-def getPesoTeorico_daMisure(tipo,larghezza,altezza,spessore):
-   f = open(fName,'r')
-   righe = f.readlines()
-   f.close()
-
-   codMis1 = (f'{larghezza}x{altezza}x{spessore}')
-   codMis2 = (f'{altezza}x{larghezza}x{spessore}')
- 
-   for riga in righe:
-      riga = riga.strip()
-      dati = riga.split('-')
-      if dati[0] == tipo:
-         cod = dati[1].split('|')
-         cod[0] = cod[0].strip()
-         cod[1] = cod[1].strip()
-         if cod[0] == codMis1 or cod[0] == codMis2:
-            return float(cod[1])
-   #creare msg Box
-   return 0.0  
-
-def aggiungi_prodotto_daMisure(tipo,larghezza,altezza,spessore,peso):
-   f = open(fName,'a')
-   f.write(f'{tipo}-{larghezza}x{altezza}x{spessore} | {peso}\n')
-   f.close()
+   def stampa_prodotto(self):
+      dati = self.codice.split('-')
+      tipo = tipi[dati[0].strip()]
+      misure = dati[1].strip()
+      return (f"{tipo}  -  {misure}")
    
-def aggiungi_prodotto_daCodice(codice,peso):
-   f = open(fName,'a')
-   f.write(f'{codice} | {peso}\n')
-   f.close()
+   def get_pesoT(self):
+      f = open(fileName,"r")
+      righe = f.readlines()
+      f.close()
+      for riga in righe:
+         riga = riga.strip()
+         dati = riga.split('|')
+         if dati[0].strip() == self.codice:
+            pesoT = dati[1].strip()
+            return float(pesoT)
 
-def modifica_prodotto_daCodice(codice,peso):
-   trovato = False
-   f = open(fName,"r")
-   righe = f.readlines()
-   f.close()
-   i = 0
-   for riga in righe:
-      riga = riga.strip()
-      dati = riga.split('|')
-      cod = dati[0]
-      cod = cod.strip()
-      if cod == codice:
-         righe[i] = (f'{codice} | {peso}\n')
-         trovato = True
-         break
-      i+=1
-   f = open(fName,"w")
-   f.writelines(righe)
-   f.close()
-   return trovato
+   def aggiungi_prodotto(self,pesoT):
+      f = open(fileName,'a')
+      f.write(f'{self.codice} | {pesoT}\n')
+      f.close()
    
+   def modifica_prodotto(self,newPeso):
+      trovato = False
+      try:
+         f = open(fileName,"r")
+         righe = f.readlines()
+         f.close()
+         i = 0
+         for riga in righe:
+            riga = riga.strip()
+            dati = riga.split('|')
+            cod = dati[0]
+            cod = cod.strip()
+            if cod == self.codice:
+                  righe[i] = (f'{self.codice} | {newPeso}\n')
+                  trovato = True
+                  break
+            i+=1
+         f = open(fileName,"w")
+         f.writelines(righe)
+         f.close()
+         return trovato
+      except:
+         print("Prodotto non presente")
+
+   def mtToKg(self,pesoT,metri):
+      return pesoT*metri
+
+   def kgToMt(self,pesoT,kili):
+      return kili/pesoT
+  
 def crea_lista_prodotti():
-   f = open(fName,'r')
+   f = open(fileName,'r')
    righe = f.readlines()
    f.close()
 
-   i=0
+   prodotti_list = []
    for riga in righe:
-      dati = riga.split('-')
-      tipoCompleto = tipi[dati[0]]
-      dati = dati[1].split('|')
-      righe[i] = (f'{tipoCompleto} - {dati[0]}  Peso: {dati[1]} Kg/m')
-      i+=1
+      dati = riga.split('|')
+      cod = dati[0].strip()
+      p = Prodotto(cod)
+      prodotti_list.append(p)
 
-   return righe
+   return prodotti_list
 
-def mtToKg(metri,peso):
-   return peso*metri
+def crea_lista_prodotti_tabella():
+   f = open(fileName,'r')
+   righe = f.readlines()
+   f.close()
 
-def kgToMt(kili,peso):
-   return kili/peso
+   prodotti_list = []
+   for riga in righe:
+      dati = riga.split('|')
+      id = dati[0].strip()
+      peso_teorico = dati[1].strip()
+      dati = dati[0].split('-')
+      misure = dati[1].strip()
+      tipo = tipi[dati[0].strip()]
+
+      prod = (id,tipo,misure,peso_teorico)
+      prodotti_list.append(prod)
+
+   return prodotti_list
+
+
+class Tubolare(Prodotto):
+   def __init__(self,larghezza,altezza,spessore):
+      self.tipo = "tb"
+      self.larghezza = larghezza
+      self.altezza = altezza
+      self.spessore = spessore
+      codice = (f"{self.tipo}-{self.larghezza}x{self.altezza}x{self.spessore}")
+      super().__init__(codice)
+   
+   def stampa_tubolare(self):
+      print(f"Tubolare {self.larghezza}x{self.altezza}x{self.spessore}\tPeso Teorico:{self.pesoT}")
+      
+class Piatto(Prodotto):
+   def __init__(self,larghezza,spessore):
+      self.tipo = "pt"
+      self.larghezza = larghezza
+      self.spessore = spessore
+      codice = (f"{self.tipo}-{self.larghezza}x{self.spessore}")
+      super().__init__(codice)
+   
+   def stampa_piatto(self):
+      print(f"Piatto {self.larghezza}x{self.spessore}\tPeso Teorico:{self.pesoT}")
+
+class TuboTondo(Prodotto):
+   def __init__(self,diametro,spessore):
+      self.tipo = "tt"
+      self.diametro = diametro
+      self.spessore = spessore
+      codice = (f"{self.tipo}-{self.diametro}x{self.spessore}")
+      super().__init__(codice)
+
+class Tondo(Prodotto):
+   def __init__(self,diametro):
+      self.tipo = "td"
+      self.diametro = diametro
+      codice = (f"{self.tipo}-{self.diametro}")
+      super().__init__(codice)
+
+class Quadro(Prodotto):
+   def __init__(self,larghezza,altezza):
+      self.tipo = "qd"
+      self.larghezza = larghezza
+      self.altezza = altezza
+      codice = (f"{self.tipo}-{self.larghezza}x{self.altezza}")
+      super().__init__(codice)
+
