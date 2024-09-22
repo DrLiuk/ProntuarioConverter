@@ -183,6 +183,7 @@ def create_main_window():
 
     tipo = StringVar()
     prodotto = []
+    id = ""
 
     def selected():
         selected_index = listbox.curselection()  # Get the selected item's index
