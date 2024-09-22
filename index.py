@@ -1,7 +1,9 @@
 from tkinter import *
 from tkinter import ttk
+from tkinter import messagebox
 import prodotti
 import frameOperator as frameOP
+
 
 font_One = 'Times New Roman'
 color_window_left_frame = '#32373B'
@@ -22,17 +24,36 @@ tipi = {
         'Quadro' : 'qd',
     }
 
+def show_error_message():
+    messagebox.showerror(title="Errore",message="Errore nell'inserimento dei valori")
+def show_info_message():
+    messagebox.showinfo(title="Info", message="Dati mancanti\nControlla di aver inserito le misure")
 def crea_prodotto(prodotto):
     if prodotto[0] == "tb":
-        return prodotti.Tubolare(prodotto[1].get(),prodotto[2].get(),prodotto[3].get())
+        if prodotto[1].get() == "" or prodotto[2].get() == "" or prodotto[3].get() == "":
+            return "error"
+        else:
+            return prodotti.Tubolare(prodotto[1].get(),prodotto[2].get(),prodotto[3].get())
     if prodotto[0] == "pt":
-        return prodotti.Piatto(prodotto[1].get(),prodotto[2].get())
+        if prodotto[1].get() == "" or prodotto[2].get() == "":
+            return "error"
+        else:
+            return prodotti.Piatto(prodotto[1].get(),prodotto[2].get())
     if prodotto[0] == "tt":
-        return prodotti.TuboTondo(prodotto[1].get(),prodotto[2].get())
+        if prodotto[1].get() == "" or prodotto[2].get() == "":
+            return "error"
+        else:
+            return prodotti.TuboTondo(prodotto[1].get(),prodotto[2].get())
     if prodotto[0] == "td":
-        return prodotti.Tondo(prodotto[1].get())
+        if prodotto[1].get() == "":
+            return "error"
+        else:
+            return prodotti.Tondo(prodotto[1].get())
     if prodotto[0] == "qd":
-        return prodotti.Quadro(prodotto[1].get(),prodotto[2].get())
+        if prodotto[1].get() == "" or prodotto[2].get() == "":
+            return "error"
+        else:
+            return prodotti.Quadro(prodotto[1].get(),prodotto[2].get())
     else:
         print("tipo prodotto passato non riconosciuto")
 
@@ -51,21 +72,32 @@ def crea_prodotto_from_selection(prodotto):
         print("tipo prodotto passato non riconosciuto")
 
 def calcola(prodotto,frameCall):
+    try:
+        if type(prodotto[1]) == StringVar:
+            prod = crea_prodotto(prodotto)
+            prodotto.clear()
+            if prod == "error": 
+                show_error_message()
+                frameOP.chiudi_frame(frameCall)
+                return
+        elif type(prodotto[1]) == str:
+            prod = crea_prodotto_from_selection(prodotto)
+            prodotto.clear()
+        else:
+            print("no check")
+    except:
+        prodotto.clear()
+        show_info_message()
+        return
+    finally:
+        frameOP.chiudi_frame(frameCall)
+
+    
     calcolaWindow = Tk()
-    calcolaWindow.geometry('570x180+570+260')
+    calcolaWindow.geometry('570x220+570+260')
     calcolaWindow.resizable(False,False)
     calcolaWindow.columnconfigure(3,weight=1)
     calcolaWindow.rowconfigure(2,weight=1)
-
-    frameOP.chiudi_frame(frameCall)
-    if type(prodotto[1]) == StringVar:
-        prod = crea_prodotto(prodotto)
-    elif type(prodotto[1]) == str:
-        prod = crea_prodotto_from_selection(prodotto)
-    else:
-        print("no check")
-    
-    prodotto.clear()
     calcolaWindow.title(prod.stampa_prodotto()) # SETTAGGIO TITOLO FINESTRA CON CODICE PRODOTTO
 
     def converti():
@@ -86,21 +118,24 @@ def calcola(prodotto,frameCall):
             pass
 
     #Creazione GUI
+    topLabel_description = Label(calcolaWindow,text=prod.stampa_prodotto(),font=(font_One,24))
+    topLabel_description.grid(column=0,row=0,columnspan=3)
+
     metriLabel = Label(calcolaWindow,text='METRI',font=(font_One,18),padx=10,pady=10)
-    metriLabel.grid(column=0,row=0,padx=30,pady=10)
+    metriLabel.grid(column=0,row=1,padx=30,pady=10)
     metriEntry = Entry(calcolaWindow,font=(font_One,18),width=15,bd=7)
-    metriEntry.grid(column=0,row=1,padx=10,pady=2)
+    metriEntry.grid(column=0,row=2,padx=10,pady=2)
 
     equalLabel = Label(calcolaWindow,text='=',font=(font_One,28),padx=10,pady=10)
-    equalLabel.grid(column=1,row=0,rowspan=2,padx=30,pady=10)
+    equalLabel.grid(column=1,row=1,rowspan=2,padx=30,pady=10)
 
     kiliLabel = Label(calcolaWindow,text='KILOGRAMMI',font=(font_One,18),padx=10,pady=10)
-    kiliLabel.grid(column=2,row=0,padx=30,pady=10)
+    kiliLabel.grid(column=2,row=1,padx=30,pady=10)
     kiliEntry = Entry(calcolaWindow,font=(font_One,18),width=15,bd=7)
-    kiliEntry.grid(column=2,row=1,padx=10,pady=2)
+    kiliEntry.grid(column=2,row=2,padx=10,pady=2)
 
     calcolaPesoButton = Button (calcolaWindow,text='Calcola',command=lambda:converti())
-    calcolaPesoButton.grid(column=0,row=3,columnspan=3,pady=15)
+    calcolaPesoButton.grid(column=0,row=4,columnspan=3,pady=15)
 
 def mostra():
     mostraWindow = Tk()
@@ -142,12 +177,12 @@ def mostra():
 def create_main_window():
     mainWindow = Tk()
     mainWindow.title('Convertitore pesi prontuario')
+    mainWindow.iconbitmap("utility\LOGO DSALD.ico")
     mainWindow.geometry('800x520+250+100')
     mainWindow.resizable(False,False)
 
     tipo = StringVar()
     prodotto = []
-    id = [""]
 
     def selected():
         selected_index = listbox.curselection()  # Get the selected item's index
@@ -161,7 +196,38 @@ def create_main_window():
             for misura in misure :
                 prodotto.append(misura)
 
-    # Banner titolo largo in alto
+    def scegli_input():
+        frameOP.chiudi_frame(mainWindow_inputFrame[0])
+        mainWindow_inputFrame.pop()
+        mainWindow_inputFrame.append(frameOP.crea_InputFrame(mainWindow_leftFrame))
+        inputTipo = tipi[tipo.get()]
+        prodotto.clear()
+        id = inputTipo 
+        frameOP.aggiorna_listBox(listbox,id)
+        if inputTipo == 'tb':
+            larghezza = frameOP.crea_larghezzaFrame(mainWindow_inputFrame[0])
+            altezza = frameOP.crea_altezzaFrame(mainWindow_inputFrame[0])
+            spessore = frameOP.crea_spessoreFrame(mainWindow_inputFrame[0])
+            prodotto.extend([inputTipo,larghezza,altezza,spessore])
+        elif inputTipo == 'pt':
+            larghezza = frameOP.crea_larghezzaFrame(mainWindow_inputFrame[0])
+            spessore = frameOP.crea_spessoreFrame(mainWindow_inputFrame[0])
+            prodotto.extend([inputTipo,larghezza,spessore])
+        elif inputTipo == 'tt':
+            diametro = frameOP.crea_diametroFrame(mainWindow_inputFrame[0])
+            spessore = frameOP.crea_spessoreFrame(mainWindow_inputFrame[0])
+            prodotto.extend([inputTipo,diametro,spessore])
+        elif inputTipo == 'td':
+            diametro = frameOP.crea_diametroFrame(mainWindow_inputFrame[0])
+            prodotto.extend([inputTipo,diametro])
+        elif inputTipo == 'qd':
+            larghezza = frameOP.crea_larghezzaFrame(mainWindow_inputFrame[0])
+            altezza = frameOP.crea_altezzaFrame(mainWindow_inputFrame[0])
+            prodotto.extend([inputTipo,larghezza,altezza])
+        else:
+            print("Errore comboBox")
+
+    # Banner titolo largo
     mainWindow_topFrame = Frame(mainWindow,background = color_top_background)
     mainWindow_topFrame.pack(side='top',fill= 'x')
     mainWindow_labBig = Label(mainWindow_topFrame, text="Convertitore pesi prontuario",background = color_top_background,font=(font_One,36),pady=10)
@@ -171,40 +237,8 @@ def create_main_window():
     mainWindow_leftFrame = Frame(mainWindow,background=color_window_left_frame,padx=50)
     mainWindow_leftFrame.pack(side='left',fill=BOTH)
 
-     # Frame per input
+    # Frame per input
     mainWindow_inputFrame = [frameOP.crea_InputFrame(mainWindow_leftFrame)]
-    
-    def scegli_input():
-        frameOP.chiudi_frame(mainWindow_inputFrame[0])
-        mainWindow_inputFrame.pop()
-        mainWindow_inputFrame.append(frameOP.crea_InputFrame(mainWindow_leftFrame))
-        inputTipo = tipi[tipo.get()]
-        prodotto.clear()
-        id.pop() 
-        id.insert(0,inputTipo)
-        frameOP.aggiorna_listBox(listbox,id[0])
-        if inputTipo == 'tb':
-            larghezza = frameOP.crea_larghezzaFrame(mainWindow_inputFrame[0],listbox,id[0])
-            altezza = frameOP.crea_altezzaFrame(mainWindow_inputFrame[0],listbox,id[0])
-            spessore = frameOP.crea_spessoreFrame(mainWindow_inputFrame[0],listbox,id[0])
-            prodotto.extend([inputTipo,larghezza,altezza,spessore])
-        elif inputTipo == 'pt':
-            larghezza = frameOP.crea_larghezzaFrame(mainWindow_inputFrame[0],listbox,id[0])
-            spessore = frameOP.crea_spessoreFrame(mainWindow_inputFrame[0],listbox,id[0])
-            prodotto.extend([inputTipo,larghezza,spessore])
-        elif inputTipo == 'tt':
-            diametro = frameOP.crea_diametroFrame(mainWindow_inputFrame[0],listbox,id[0])
-            spessore = frameOP.crea_spessoreFrame(mainWindow_inputFrame[0],listbox,id[0])
-            prodotto.extend([inputTipo,diametro,spessore])
-        elif inputTipo == 'td':
-            diametro = frameOP.crea_diametroFrame(mainWindow_inputFrame[0],listbox,id[0])
-            prodotto.extend([inputTipo,diametro])
-        elif inputTipo == 'qd':
-            larghezza = frameOP.crea_larghezzaFrame(mainWindow_inputFrame[0],listbox,id[0])
-            altezza = frameOP.crea_altezzaFrame(mainWindow_inputFrame[0],listbox,id[0])
-            prodotto.extend([inputTipo,larghezza,altezza])
-        else:
-            print("Errore comboBox")
 
     #TIPO Frame con combobox per selezione tipo e GUI
     mainWindow_tipoFrame = Frame(mainWindow_leftFrame,background=color_window_left_frame,padx=50,pady=15)
@@ -220,7 +254,6 @@ def create_main_window():
 
     tipoBox.bind("<<ComboboxSelected>>",lambda x:scegli_input())
 
-
      # Frame per contenere i bottoni
     mainWindow_buttonFrame = Frame(mainWindow,padx=3,background=color_verylightgray)
     mainWindow_buttonFrame.pack(side='right',fill = BOTH,expand=True)
@@ -229,24 +262,27 @@ def create_main_window():
 
     # Bottone MOSTRA
     button2 = Button(mainWindow_buttonFrame, text="MOSTRA",
-                     command = lambda:mostra(), font =(font_One,16),width=15, height=1,
+                     command = lambda:mostra(),
+                     font =(font_One,16),width=15, height=1,
                      background=color_button, activebackground =color_button_active)
     button2.grid(column=0,row=0,padx=2,pady=5)
     
     # Bottone CALCOLA
     button3 = Button(mainWindow_buttonFrame, text="CALCOLA",
-                     command=lambda:calcola(prodotto,mainWindow_inputFrame[0]),font =(font_One,16),width=15, height=1,
+                     command=lambda:calcola(prodotto,mainWindow_inputFrame[0]),
+                     font =(font_One,16),width=15, height=1,
                      background=color_button, activebackground =color_button_active)
     button3.grid(column=1,row=0,padx=3,pady=5)
 
     # ListBox che mostra tutti i prodotti nella home
     listbox = Listbox(mainWindow_buttonFrame,height=16,width=35,selectmode='single', bd=1,
                      background= color_lightgray,selectbackground=color_button,selectforeground='black',font=('Helvetiva',14))
+    
 
-    frameOP.aggiorna_listBox(listbox,id[0])
     listbox.grid(column=0,row=1,columnspan=2,pady=5)
     listbox.bind('<<ListboxSelect>>',lambda x:selected())
 
+    frameOP.aggiorna_listBox(listbox,id)
 
     mainWindow.mainloop()
 
